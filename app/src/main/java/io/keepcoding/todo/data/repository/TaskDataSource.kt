@@ -3,7 +3,7 @@ package io.keepcoding.todo.data.repository
 import io.keepcoding.todo.data.model.Task
 import io.reactivex.Single
 
-interface TaskRepository {
+interface TaskDataSource {
 
     fun getAll(): Single<List<Task>>
 
