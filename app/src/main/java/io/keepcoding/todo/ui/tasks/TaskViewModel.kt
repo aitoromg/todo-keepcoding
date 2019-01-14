@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import io.keepcoding.todo.data.model.Task
 import io.keepcoding.todo.data.repository.TaskRepository
 import io.keepcoding.todo.ui.base.BaseViewModel
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
 
@@ -21,6 +23,13 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
     fun loadTasks() {
         taskRepository
             .getAll()
+            .flatMap {
+                Single.just(
+                    listOf(
+                        Task(1, "Esto es una prueba", Date(), false)
+                    )
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
