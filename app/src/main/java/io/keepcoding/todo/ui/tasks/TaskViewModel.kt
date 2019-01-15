@@ -52,6 +52,7 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onComplete = {
+                    loadTasks()
                     newTaskAddedEvent.call()
                 },
                 onError = {
