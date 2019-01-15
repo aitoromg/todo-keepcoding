@@ -10,6 +10,10 @@
         <item name="colorIcon">@color/darkColorIcon</item>
     </style>
 
+    <style name="Dialog" parent="Theme.Design.BottomSheetDialog">
+
+    </style>
+
     <style name="MyToolbar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="android:background">?colorPrimary</item>

@@ -5,4 +5,9 @@
     <string name="new_task_title">New task</string>
     <string name="new_task_input_hint">New task content</string>
     <string name="new_task_save_button">Save</string>
+    <string name="delete">Delete</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="delete_task_title">Are you sure?</string>
+    <string name="delete_task_message">Task will be deleted forever. You can\'t bring it back</string>
 </resources>

@@ -61,6 +61,23 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             .addTo(compositeDisposable)
     }
 
+    fun deleteTask(task: Task) {
+        Completable.fromCallable {
+            taskRepository.delete(task)
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    loadTasks()
+                },
+                onError = {
+                    Log.e("TaskViewModel", "$it")
+                }
+            )
+            .addTo(compositeDisposable)
+    }
+
     fun markAsDone(task: Task) {
         if (task.isDone) {
             return

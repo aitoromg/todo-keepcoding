@@ -22,6 +22,7 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
     interface Listener {
         fun onTaskClicked(task: Task)
         fun onTaskMarked(task: Task, isDone: Boolean)
+        fun onTaskLongClicked(task: Task)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -49,6 +50,10 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
 
                 setOnClickListener {
                     listener.onTaskClicked(task)
+                }
+                setOnLongClickListener {
+                    listener.onTaskLongClicked(task)
+                    true
                 }
                 checkIsDone.setOnCheckedChangeListener { view, isChecked ->
                     listener.onTaskMarked(task, isChecked)
