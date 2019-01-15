@@ -12,15 +12,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.keepcoding.todo.R
+import io.keepcoding.todo.data.model.Task
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TaskFragment : Fragment() {
+class TaskFragment : Fragment(), TaskAdapter.Listener {
 
     val taskViewModel: TaskViewModel by viewModel()
 
     val adapter: TaskAdapter by lazy {
-        TaskAdapter()
+        TaskAdapter(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -35,9 +36,17 @@ class TaskFragment : Fragment() {
     private fun setUp() {
         setUpRecycler()
 
-        taskViewModel.tasksEvent.observe(this, Observer { tasks ->
-            adapter.submitList(tasks)
-        })
+        with (taskViewModel) {
+            tasksEvent.observe(this@TaskFragment, Observer { tasks ->
+                adapter.submitList(tasks)
+            })
+
+            taskUpdatedEvent.observe(this@TaskFragment, Observer {
+                it.getContentIfNotHandled()?.let { updatedTask ->
+
+                }
+            })
+        }
     }
 
     private fun setUpRecycler() {
@@ -45,4 +54,17 @@ class TaskFragment : Fragment() {
         recyclerTasks.itemAnimator = DefaultItemAnimator()
         recyclerTasks.adapter = adapter
     }
+
+    override fun onTaskClicked(task: Task) {
+        // TODO navigate to detail
+    }
+
+    override fun onTaskMarked(task: Task, isDone: Boolean) {
+        if (isDone) {
+            taskViewModel.markAsDone(task)
+        } else {
+            taskViewModel.markAsNotDone(task)
+        }
+    }
+
 }
