@@ -1,6 +1,7 @@
 package io.keepcoding.todo.ui.tasks
 
 import android.animation.ValueAnimator
+import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.keepcoding.todo.R
 import io.keepcoding.todo.data.model.Task
 import io.keepcoding.todo.util.DateHelper
+import io.keepcoding.todo.util.IconButton
 import kotlinx.android.synthetic.main.item_task.view.*
 
 class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffUtil.getInstance()) {
@@ -25,6 +27,7 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
         fun onTaskClicked(task: Task)
         fun onTaskMarked(task: Task, isDone: Boolean)
         fun onTaskLongClicked(task: Task)
+        fun onTaskHighPriorityMarked(task: Task, isHighPriority: Boolean)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -45,6 +48,7 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
                 } else {
                     removeStrikethrough(textContent, task.content)
                 }
+                applyColorToHighPriority(itemView.findViewById(R.id.buttonHighPriority), task.isHighPriority)
 
                 textDate.text = DateHelper.calculateTimeAgo(task.createdAt)
 
@@ -70,6 +74,19 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
 
                     executeAnimation(itemView, isChecked)
                 }
+                buttonHighPriority.setOnClickListener {
+                    val isHighPriority = !task.isHighPriority
+
+                    listener.onTaskHighPriorityMarked(task, isHighPriority)
+                }
+            }
+        }
+
+        private fun applyColorToHighPriority(view: IconButton, isHighPriority: Boolean) {
+            if (isHighPriority) {
+                view.setColorDrawable(Color.RED)
+            } else {
+                view.setColorDrawable(Color.WHITE)
             }
         }
 

@@ -19,6 +19,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <CheckBox
+            android:id="@+id/checkHighPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_task_is_high_priority"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
+
     <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -66,11 +66,16 @@ class EditTaskFragment : BottomSheetDialog() {
         }
 
         inputTaskContent.setText(task!!.content)
+        checkHighPriority.isChecked = task!!.isHighPriority
     }
 
     private fun bindActions() {
         buttonSaveTask.setOnClickListener {
-            taskViewModel.updateTaskContent(task!!, inputTaskContent.text.toString())
+            val newTask = task!!.copy(
+                content = inputTaskContent.text.toString(),
+                isHighPriority = checkHighPriority.isChecked)
+
+            taskViewModel.updateTask(newTask)
         }
     }
 
