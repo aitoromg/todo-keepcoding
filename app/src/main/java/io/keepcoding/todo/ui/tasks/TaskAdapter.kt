@@ -4,10 +4,12 @@ import android.animation.ValueAnimator
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.ListAdapter
@@ -55,10 +57,12 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
                     listener.onTaskLongClicked(task)
                     true
                 }
-                checkIsDone.setOnCheckedChangeListener { view, isChecked ->
+                checkIsDone.setOnClickListener {
+                    val isChecked = (it as CheckBox).isChecked
+
                     listener.onTaskMarked(task, isChecked)
 
-                    view.animate()
+                    it.animate()
                         .rotationBy(360f)
                         .setDuration(300)
                         .setInterpolator(FastOutSlowInInterpolator())

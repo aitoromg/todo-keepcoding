@@ -5,31 +5,13 @@ import org.joda.time.Period
 import org.joda.time.PeriodType
 import org.joda.time.format.ISOPeriodFormat
 import org.joda.time.format.PeriodFormat
+import org.ocpsoft.prettytime.PrettyTime
 import java.util.*
 
 object DateHelper {
 
-    // TODO("Improve this method")
-    fun calculateTimeAgo(date: Date): String {
-        val past = DateTime(date.time)
-        val now = DateTime.now()
+    val prettyTime by lazy { PrettyTime() }
 
-        val period = Period(
-            past,
-            now,
-            PeriodType
-                .dayTime()
-                .withSecondsRemoved()
-                .withMillisRemoved())
-
-        val formatter =
-            PeriodFormat
-                .getDefault()
-                .withLocale(Locale.ENGLISH)
-
-        val timeAgo = formatter.print(period)
-        return timeAgo
-    }
-
+    fun calculateTimeAgo(date: Date): String = prettyTime.format(date)
 
 }
