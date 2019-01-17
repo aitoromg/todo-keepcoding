@@ -20,6 +20,7 @@ import java.util.*
 class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
 
     val tasksEvent = MutableLiveData<List<Task>>()
+
     val newTaskAddedEvent = MutableLiveData<Event<Unit>>()
     val taskUpdatedEvent = MutableLiveData<Event<Task>>()
 
@@ -29,11 +30,11 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
 
     fun loadTasks() {
         taskRepository
-            .getAll()
+            .observeAll()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onSuccess = { tasks ->
+                onNext = { tasks ->
                     tasksEvent.value = tasks
                 },
                 onError = {
@@ -52,7 +53,6 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onComplete = {
-                    loadTasks()
                     newTaskAddedEvent.call()
                 },
                 onError = {
@@ -70,7 +70,6 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onComplete = {
-                    loadTasks()
                 },
                 onError = {
                     Log.e("TaskViewModel", "$it")
@@ -94,6 +93,11 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
         }
 
         val newTask = task.copy(isDone = false)
+        updateTask(newTask)
+    }
+
+    fun updateTaskContent(task: Task, newContent: String) {
+        val newTask = task.copy(content = newContent)
         updateTask(newTask)
     }
 

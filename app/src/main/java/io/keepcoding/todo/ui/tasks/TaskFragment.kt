@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.keepcoding.todo.R
 import io.keepcoding.todo.data.model.Task
+import io.keepcoding.todo.util.Navigator
 import io.keepcoding.todo.util.bottomsheet.BottomMenuItem
 import io.keepcoding.todo.util.bottomsheet.BottomSheetMenu
 import kotlinx.android.synthetic.main.fragment_tasks.*
@@ -44,12 +45,6 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
             tasksEvent.observe(this@TaskFragment, Observer { tasks ->
                 adapter.submitList(tasks)
             })
-
-            taskUpdatedEvent.observe(this@TaskFragment, Observer {
-                it.getContentIfNotHandled()?.let { updatedTask ->
-
-                }
-            })
         }
     }
 
@@ -60,11 +55,14 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
     }
 
     override fun onTaskClicked(task: Task) {
-        // TODO navigate to detail
+
     }
 
     override fun onTaskLongClicked(task: Task) {
         val items = arrayListOf(
+            BottomMenuItem(R.drawable.ic_edit, getString(R.string.edit)) {
+                Navigator.navigateToEditTaskFragment(task, childFragmentManager)
+            },
             BottomMenuItem(R.drawable.ic_delete, getString(R.string.delete)) {
                 showConfirmDeleteTaskDialog(task)
             }

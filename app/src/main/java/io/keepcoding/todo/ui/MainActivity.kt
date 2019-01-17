@@ -5,6 +5,7 @@ import com.jakewharton.rxbinding3.view.clicks
 import io.keepcoding.todo.R
 import io.keepcoding.todo.ui.base.BaseActivity
 import io.keepcoding.todo.ui.tasks.TaskFragment
+import io.keepcoding.todo.ui.tasks.TaskViewModel
 import io.keepcoding.todo.util.Navigator
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo

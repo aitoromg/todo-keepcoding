@@ -9,13 +9,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 abstract class BaseActivity : AppCompatActivity() {
 
     protected fun setUpToolbar(homeIsEnabled: Boolean) {
-    val toolbar = findViewById<Toolbar>(R.id.toolbar).apply {
-        setSubtitle(null)
-    }
+        val toolbar = findViewById<Toolbar>(R.id.toolbar).apply {
+            setSubtitle(null)
+        }
 
-    setSupportActionBar(toolbar)
-    supportActionBar?.setHomeButtonEnabled(homeIsEnabled)
-    supportActionBar?.setDisplayShowHomeEnabled(homeIsEnabled)
-}
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeButtonEnabled(homeIsEnabled)
+        supportActionBar?.setDisplayShowHomeEnabled(homeIsEnabled)
+    }
 
 }
