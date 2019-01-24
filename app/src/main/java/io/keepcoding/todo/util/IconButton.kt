@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.TintableBackgroundView
 import androidx.core.widget.ImageViewCompat
@@ -23,7 +24,13 @@ class IconButton @JvmOverloads constructor(
     }
 
     fun setColorDrawable(color: Int) {
-        DrawableCompat.setTint(drawable, color)
+        val newDrawable = ContextCompat.getDrawable(context, R.drawable.ic_high_priority)
+
+        newDrawable?.let {
+            val finalDrawable = DrawableCompat.wrap(it)
+            DrawableCompat.setTint(finalDrawable.mutate(), color)
+            setImageDrawable(finalDrawable)
+        }
     }
 
 }
