@@ -8,25 +8,19 @@ import io.keepcoding.todo.ui.base.BaseViewModel
 import io.keepcoding.todo.util.Event
 import io.keepcoding.todo.util.call
 import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import java.util.*
 
 class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
 
     val tasksEvent = MutableLiveData<List<Task>>()
-
+    val taskEvent = MutableLiveData<Event<Task>>()
     val newTaskAddedEvent = MutableLiveData<Event<Unit>>()
+    val taskDeletedEvent = MutableLiveData<Event<Unit>>()
     val taskUpdatedEvent = MutableLiveData<Event<Task>>()
-
-    init {
-        loadTasks()
-    }
 
     fun loadTasks() {
         taskRepository
@@ -43,8 +37,38 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             ).addTo(compositeDisposable)
     }
 
-    fun addNewTask(taskContent: String, isHighPriority: Boolean) {
-        val newTask = Task(0, taskContent, Date(), false, isHighPriority)
+    fun loadSubtasks(parentId: Long) {
+        taskRepository
+            .observeSubtasks(parentId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { tasks ->
+                    tasksEvent.value = tasks
+                },
+                onError = {
+                    Log.e("TaskViewModel", "Error: $it")
+                }
+            ).addTo(compositeDisposable)
+    }
+
+    fun getTask(id: Long) {
+        taskRepository
+            .getTaskById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { task ->
+                    taskEvent.call(task)
+                },
+                onError = {
+                    Log.e("TaskViewModel", "Error: $it")
+                }
+            ).addTo(compositeDisposable)
+    }
+
+    fun addNewTask(taskContent: String, priorityLevel: Int, parentId: Long) {
+        val newTask = Task(0, if (parentId == 0L) null else parentId, taskContent, Date(), false, priorityLevel)
 
         Completable.fromCallable {
             taskRepository.insert(newTask)
@@ -70,6 +94,7 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onComplete = {
+                    taskDeletedEvent.call()
                 },
                 onError = {
                     Log.e("TaskViewModel", "$it")
@@ -96,8 +121,8 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
         updateTask(newTask)
     }
 
-    fun markHighPriority(task: Task, highPriority: Boolean) {
-        val newTask = task.copy(isHighPriority = highPriority)
+    fun setPriority(task: Task, priorityLevel: Int) {
+        val newTask = task.copy(priorityLevel = priorityLevel)
         updateTask(newTask)
     }
 

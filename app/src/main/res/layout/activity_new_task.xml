@@ -44,14 +44,33 @@
             android:text="@string/new_task_save_button"
             android:id="@+id/buttonSaveTask"/>
 
-    <CheckBox
-            android:text="@string/new_task_is_high_priority"
+    <RadioGroup
+            android:id="@+id/groupPriority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/checkHighPriority"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"/>
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <RadioButton
+                android:id="@+id/priorityLow"
+                android:text="@string/priority_low"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:id="@+id/priorityMid"
+                android:text="@string/priority_mid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:id="@+id/priorityHigh"
+                android:text="@string/priority_high"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

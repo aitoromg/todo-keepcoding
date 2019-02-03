@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.keepcoding.todo.R
 import io.keepcoding.todo.data.model.Task
-import io.keepcoding.todo.util.DateHelper
-import io.keepcoding.todo.util.IconButton
+import io.keepcoding.todo.util.*
 import kotlinx.android.synthetic.main.item_task.view.*
 
 class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffUtil.getInstance()) {
@@ -27,7 +26,7 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
         fun onTaskClicked(task: Task)
         fun onTaskMarked(task: Task, isDone: Boolean)
         fun onTaskLongClicked(task: Task)
-        fun onTaskHighPriorityMarked(task: Task, isHighPriority: Boolean)
+        fun onTaskPriorityChanged(task: Task, priorityLevel: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -48,14 +47,16 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
                 } else {
                     removeStrikethrough(textContent, task.content)
                 }
-                applyColorToHighPriority(itemView.findViewById(R.id.buttonHighPriority), task.isHighPriority)
+                applyColorToPriorityLevel(itemView.findViewById(R.id.buttonPriority), task.priorityLevel)
 
                 textDate.text = DateHelper.calculateTimeAgo(task.createdAt)
 
                 checkIsDone.isChecked = task.isDone
 
-                setOnClickListener {
-                    listener.onTaskClicked(task)
+                if (task.parentId == null) {
+                    setOnClickListener {
+                        listener.onTaskClicked(task)
+                    }
                 }
                 setOnLongClickListener {
                     listener.onTaskLongClicked(task)
@@ -74,19 +75,19 @@ class TaskAdapter(val listener: Listener) : ListAdapter<Task, TaskAdapter.TaskVi
 
                     executeAnimation(itemView, isChecked)
                 }
-                buttonHighPriority.setOnClickListener {
-                    val isHighPriority = !task.isHighPriority
+                buttonPriority.setOnClickListener {
+                    val priorityLevel = (task.priorityLevel+1) % TASK_PRIORITIES
 
-                    listener.onTaskHighPriorityMarked(task, isHighPriority)
+                    listener.onTaskPriorityChanged(task, priorityLevel)
                 }
             }
         }
 
-        private fun applyColorToHighPriority(view: IconButton, isHighPriority: Boolean) {
-            if (isHighPriority) {
-                view.setColorDrawable(Color.RED)
-            } else {
-                view.setColorDrawable(Color.WHITE)
+        private fun applyColorToPriorityLevel(view: IconButton, priorityLevel: Int) {
+            when (priorityLevel){
+                PRIORITY_LOW -> view.setColorDrawable(Color.BLUE)
+                PRIORITY_MID -> view.setColorDrawable(Color.GREEN)
+                PRIORITY_HIGH -> view.setColorDrawable(Color.RED)
             }
         }
 

@@ -23,9 +23,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TaskFragment : Fragment(), TaskAdapter.Listener {
 
-    val taskViewModel: TaskViewModel by viewModel()
+    private val taskViewModel: TaskViewModel by viewModel()
 
-    val adapter: TaskAdapter by lazy {
+    private val adapter: TaskAdapter by lazy {
         TaskAdapter(this)
     }
 
@@ -41,6 +41,15 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
     private fun setUp() {
         setUpRecycler()
 
+        arguments?.let {
+            val parentId = it.getLong("parentId")
+            if (parentId != 0L) {
+                taskViewModel.loadSubtasks(parentId)
+            } else {
+                taskViewModel.loadTasks()
+            }
+        }
+
         with (taskViewModel) {
             tasksEvent.observe(this@TaskFragment, Observer { tasks ->
                 adapter.submitList(tasks)
@@ -55,11 +64,11 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
     }
 
     override fun onTaskClicked(task: Task) {
-
+        Navigator.navigateToDetailTaskActivity(task, context!!)
     }
 
     override fun onTaskLongClicked(task: Task) {
-        val items = arrayListOf(
+        var items = arrayListOf(
             BottomMenuItem(R.drawable.ic_edit, getString(R.string.edit)) {
                 Navigator.navigateToEditTaskFragment(task, childFragmentManager)
             },
@@ -67,6 +76,12 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
                 showConfirmDeleteTaskDialog(task)
             }
         )
+
+        if (task.parentId == null) {
+            items.add(BottomMenuItem(R.drawable.ic_fab_add, getString(R.string.add_subtask)) {
+                Navigator.navigateToNewTaskActivity(task.id, context!!)
+            })
+        }
 
         BottomSheetMenu(activity!!, items).show()
     }
@@ -91,8 +106,8 @@ class TaskFragment : Fragment(), TaskAdapter.Listener {
         }
     }
 
-    override fun onTaskHighPriorityMarked(task: Task, isHighPriority: Boolean) {
-        taskViewModel.markHighPriority(task, isHighPriority)
+    override fun onTaskPriorityChanged(task: Task, priorityLevel: Int) {
+        taskViewModel.setPriority(task, priorityLevel)
     }
 
 }
